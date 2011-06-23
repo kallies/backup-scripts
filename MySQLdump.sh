@@ -1,5 +1,17 @@
 #!/bin/sh
 
+################################################
+# ~/git/backup-scripts/MySQLdump.sh
+# Lukas Kallies
+# Created: Do Jun 23, 2011 - Lukas Kallies
+# Last modified: Do Jun 23, 2011 - 13:52
+#
+# This script backups all MySQL databases on a
+# host. On debian based systems it greps for the
+# debian-sys-maint password, otherwise you can
+# configure user and password (e.g. root).
+################################################
+
 export LANG=C
 
 ORG_DIR=`pwd`

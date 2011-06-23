@@ -1,5 +1,28 @@
 #!/bin/sh
 
+################################################
+# ~/git/backup-scripts/backup.sh
+# Lukas Kallies
+# Created: Do Jun 23, 2011 - Lukas Kallies
+# Last modified: Do Jun 23, 2011 - 13:59
+#
+# This scripts backups /etc /home /root and /var
+# (in a very static way). It also runs a MySQL
+# backup script and includes the (currently
+# static given) file. You can specify an
+# exclusion list of files (e.g. in
+# /backup/exclude.example).
+# 
+# There is a configurable suffix which will be
+# given to all files. Default is day of week
+# (one digit) so backups are rotated weekly.
+# 
+# Afer creating the tar.gz files they will be
+# encrypted with a configured gpg key and the
+# resulting files will be uploaded on an ftp
+# server. 
+################################################
+
 export LANG=C
 
 GPGKEY=""
@@ -7,6 +30,8 @@ FTPUSER=""
 FTPPASSWD=""
 FTPSERVER=""
 BACKUPPATH="/backup"
+MYSQLBACKUP="./MySQLdump.sh"
+EXCLUDE="/backup/exclude.example"
 
 TAR="/bin/tar"
 GPG="/usr/bin/gpg"
@@ -28,16 +53,15 @@ ${RM} -f etc*.tar.gz home*.tar.gz var*.tar.gz root*.tar.gz mysqldump.all.sql*.gz
 
 #create backups
 echo "> creating backup for: /etc"
-${TAR} pczf ${BACKUPPATH}/etc.tar.gz /etc/* --exclude=${BACKUPPATH}
+${TAR} pczf ${BACKUPPATH}/etc.tar.gz /etc/* --exclude=${BACKUPPATH} --exclude-from=${EXCLUDE}
 echo "> creating backup for: /home"
-${TAR} pczf ${BACKUPPATH}/home.tar.gz /home/* --exclude=${BACKUPPATH}
+${TAR} pczf ${BACKUPPATH}/home.tar.gz /home/* --exclude=${BACKUPPATH} --exclude-from=${EXCLUDE}
 echo "> creating backup for: /root"
-${TAR} pczf ${BACKUPPATH}/root.tar.gz /root/* --exclude=${BACKUPPATH}
+${TAR} pczf ${BACKUPPATH}/root.tar.gz /root/* --exclude=${BACKUPPATH} --exclude-from=${EXCLUDE}
 echo "> creating backup for: /var"
-${TAR} pczf ${BACKUPPATH}/var.tar.gz /var/* --exclude=${BACKUPPATH} --exclude-from=/root/backup.var.exclude
+${TAR} pczf ${BACKUPPATH}/var.tar.gz /var/* --exclude=${BACKUPPATH} --exclude-from=${EXCLUDE}
 echo "> creating MySQL-Dump"
-#http://lukex.de:9000/mysql
-./MySQLdump.sh
+${MYSQLBACKUP}
 
 #clear SHA1SUM file
 ${CAT} /dev/null > SHA1SUM_${SUFFIX}
