@@ -4,7 +4,7 @@
 # ~/git/backup-scripts/backup.sh
 # Lukas Kallies
 # Created: Do Jun 23, 2011 - Lukas Kallies
-# Last modified: Do Jun 23, 2011 - 13:59
+# Last modified: Do Jun 23, 2011 - 14:08
 #
 # This scripts backups /etc /home /root and /var
 # (in a very static way). It also runs a MySQL
@@ -73,8 +73,8 @@ ${SHA1SUM} *_${SUFFIX}*.gz >> SHA1SUM_${SUFFIX}
 echo "> encrypting files"
 for file in `ls *.gz`
 do
-	        $GPG --always-trust -r ${GPGKEY} -e ${file}
-		done
+	$GPG --always-trust -r ${GPGKEY} -e ${file}
+done
 
 #upload files
 echo "> uploading backups"
