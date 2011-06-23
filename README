@@ -1,0 +1,6 @@
+This is a collection of backup scripts for GNU/Linux.
+
+This includes simple backup mechanisms for directories like /home and /etc
+and other things like MySQL dump. They are aiming on root servers most
+likely running on Debian GNU/Linux.
+
