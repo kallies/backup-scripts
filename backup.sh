@@ -25,13 +25,22 @@
 
 export LANG=C
 
+#gpg key to encrypt with
 GPGKEY=""
+#ftp user, password and server
 FTPUSER=""
 FTPPASSWD=""
 FTPSERVER=""
+#where should the script place its (temporary) files?
 BACKUPPATH="/backup"
+#which backup script for MySQL should be started?
 MYSQLBACKUP="./MySQLdump.sh"
+#exclude the files mentioned in the following file
 EXCLUDE="/backup/exclude.example"
+#include the following dirs (without leading or trailing slash)
+INCLUDE="etc home var root opt"
+#Suffix for backupfiles, e.g. `date +%u` for weekly rotation
+SUFFIX=`date +%u`
 
 TAR="/bin/tar"
 GPG="/usr/bin/gpg"
@@ -42,29 +51,31 @@ SHA1SUM="/usr/bin/sha1sum"
 CAT="/bin/cat"
 LFTP="/usr/bin/lftp"
 
-SUFFIX=`date +%u`
 ORG_DIR=`pwd`
-
 #change to temp backup dir
 cd ${BACKUPPATH}
 
-#remove temp files, may be disabled
-${RM} -f etc*.tar.gz home*.tar.gz var*.tar.gz root*.tar.gz mysqldump.all.sql*.gz SHA1SUM*
+FILELIST=""
+GPGFILELIST=""
+for file in ${INCLUDE}
+do
+	FILELIST="${file}_${SUFFIX}.tar.gz $FILELIST"
+	GPGFILELIST="${file}_${SUFFIX}.tar.gz.gpg $GPGFILELIST"
+done
+
+#remove temp files
+${RM} -f ${FILELIST}
+${RM} -f mysqldump.all.sql*.gz SHA1SUM*
 
 #create backups
-echo "> creating backup for: /etc"
-${TAR} pczf ${BACKUPPATH}/etc.tar.gz /etc/* --exclude=${BACKUPPATH} --exclude-from=${EXCLUDE}
-echo "> creating backup for: /home"
-${TAR} pczf ${BACKUPPATH}/home.tar.gz /home/* --exclude=${BACKUPPATH} --exclude-from=${EXCLUDE}
-echo "> creating backup for: /root"
-${TAR} pczf ${BACKUPPATH}/root.tar.gz /root/* --exclude=${BACKUPPATH} --exclude-from=${EXCLUDE}
-echo "> creating backup for: /var"
-${TAR} pczf ${BACKUPPATH}/var.tar.gz /var/* --exclude=${BACKUPPATH} --exclude-from=${EXCLUDE}
+for path in ${INCLUDE}
+do
+	echo "> creating backup for: /${path}"
+	${TAR} pczf ${BACKUPPATH}/${path}.tar.gz /${path} --exclude=${BACKUPPATH} --exclude-from=${EXCLUDE}
+done
+#TODO check for backupmysql
 echo "> creating MySQL-Dump"
 ${MYSQLBACKUP}
-
-#clear SHA1SUM file
-${CAT} /dev/null > SHA1SUM_${SUFFIX}
 
 ${RENAME} "s/\.tar\.gz$/_${SUFFIX}\.tar\.gz/" *.tar.gz
 ${RENAME} "s/\.gz$/_${SUFFIX}\.gz/" mysqldump.all.sql.gz
@@ -78,10 +89,10 @@ done
 
 #upload files
 echo "> uploading backups"
-${LFTP} -e "mput etc_${SUFFIX}.tar.gz.gpg home_${SUFFIX}.tar.gz.gpg var_${SUFFIX}.tar.gz.gpg root_${SUFFIX}.tar.gz.gpg mysqldump.all.sql_${SUFFIX}.gz.gpg SHA1SUM_${SUFFIX}; exit" ${FTPUSER}:${FTPPASSWD}@${FTPSERVER}
+${LFTP} -e "mput ${GPGFILELIST} mysqldump.all.sql_${SUFFIX}.gz.gpg SHA1SUM_${SUFFIX}; exit" ${FTPUSER}:${FTPPASSWD}@${FTPSERVER}
 
 #remove encrypted files
-${RM} -f ${BACKUPPATH}/*.gpg
+${RM} -f ${GPGFILELIST}
 
 cd ${ORG_DIR}
 
