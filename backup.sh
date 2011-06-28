@@ -55,13 +55,15 @@ ORG_DIR=`pwd`
 #change to temp backup dir
 cd ${BACKUPPATH}
 
+#create filelists
 FILELIST=""
 GPGFILELIST=""
 for file in ${INCLUDE}
 do
-	FILELIST="${file}_${SUFFIX}.tar.gz $FILELIST"
-	GPGFILELIST="${file}_${SUFFIX}.tar.gz.gpg $GPGFILELIST"
+	FILELIST="${file}_${SUFFIX}.tar.gz ${FILELIST}"
+	GPGFILELIST="${file}_${SUFFIX}.tar.gz.gpg ${GPGFILELIST}"
 done
+GPGFILELIST="${GPGFILELIST} mysqldump.all.sql_${SUFFIX}.gz.gpg"
 
 #remove temp files
 ${RM} -f ${FILELIST}
@@ -84,12 +86,12 @@ ${SHA1SUM} *_${SUFFIX}*.gz >> SHA1SUM_${SUFFIX}
 echo "> encrypting files"
 for file in `ls *.gz`
 do
-	$GPG --always-trust -r ${GPGKEY} -e ${file}
+	${GPG} --always-trust -r ${GPGKEY} -e ${file}
 done
 
 #upload files
 echo "> uploading backups"
-${LFTP} -e "mput ${GPGFILELIST} mysqldump.all.sql_${SUFFIX}.gz.gpg SHA1SUM_${SUFFIX}; exit" ${FTPUSER}:${FTPPASSWD}@${FTPSERVER}
+${LFTP} -e "mput ${GPGFILELIST} SHA1SUM_${SUFFIX}; exit" ${FTPUSER}:${FTPPASSWD}@${FTPSERVER}
 
 #remove encrypted files
 ${RM} -f ${GPGFILELIST}
