@@ -25,7 +25,7 @@
 
 export LANG=C
 
-#gpg key to encrypt with
+#gpg key to encrypt with, e.g. 0x12341234
 GPGKEY=""
 #ftp user, password and server
 FTPUSER=""
@@ -66,8 +66,7 @@ done
 GPGFILELIST="${GPGFILELIST} mysqldump.all.sql_${SUFFIX}.gz.gpg"
 
 #remove temp files
-${RM} -f ${FILELIST}
-${RM} -f mysqldump.all.sql*.gz SHA1SUM*
+${RM} -f ${BACKUPPATH}/*.tar.gz mysqldump.all.sql*.gz SHA1SUM*
 
 #create backups
 for path in ${INCLUDE}
