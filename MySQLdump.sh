@@ -4,7 +4,7 @@
 # ~/git/backup-scripts/MySQLdump.sh
 # Lukas Kallies
 # Created: Do Jun 23, 2011 - Lukas Kallies
-# Last modified: Do Jun 23, 2011 - 13:52
+# Last modified: Die Nov 04, 2014 - 10:25
 #
 # This script backups all MySQL databases on a
 # host. On debian based systems it greps for the
@@ -13,19 +13,20 @@
 ################################################
 
 export LANG=C
+export PATH="/bin:/usr/bin"
 
 ORG_DIR=`pwd`
-MYSQLDUMP="/usr/bin/mysqldump"
-GZIP="/bin/gzip"
-GREP="/bin/grep"
-SED="/bin/sed"
+MYSQLDUMP="mysqldump"
+GZIP="gzip"
+GREP="grep"
+SED="sed"
 
 BACKUPPATH="/backup"
 FILEPREFIX="mysqldump.all"
 MYSQL_USER="debian-sys-maint"
 MYSQL_PASS=`${GREP} -m 1 password /etc/mysql/debian.cnf | ${SED} -e 's/.*= *//'`
 
-${MYSQLDUMP} --all-databases --password=${MYSQL_PASS} --user=${MYSQL_USER} --add-drop-table --add-locks --all --extended-insert --quick --lock-tables --allow-keywords > ${BACKUPPATH}/${FILEPREFIX}.sql
+${MYSQLDUMP} --all-databases --password=${MYSQL_PASS} --user=${MYSQL_USER} --add-drop-table --add-locks --extended-insert --quick --lock-tables --allow-keywords --events > ${BACKUPPATH}/${FILEPREFIX}.sql
 ${GZIP} -f ${BACKUPPATH}/${FILEPREFIX}.sql
 
 exit 0
