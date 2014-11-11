@@ -4,7 +4,7 @@
 # ~/git/backup-scripts/rsync.sh
 # Lukas Kallies
 # Created: Do Jun 23, 2011 - Lukas Kallies
-# Last modified: So Jun 26, 2011 - 11:03
+# Last modified: Di Nov 11, 2014 - 13:18
 #
 # This script backups data via rsync. The user
 # $SSHUSER needs an ssh key for the remote server
@@ -12,14 +12,15 @@
 ################################################
 
 export LANG=C
+export PATH="/bin:/usr/bin"
 
 #TODO SSH_AUTH_SOCK 
 #eval `ssh-agent`
 
 EXCLUDE="/backup/exclude.example"
 
-RSYNC="/usr/bin/rsync"
-SSH="/usr/bin/ssh"
+RSYNC="rsync"
+SSH="ssh"
 
 SSHSERVER=""
 SSHPORT="22"
