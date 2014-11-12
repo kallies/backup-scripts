@@ -4,7 +4,7 @@
 # ~/git/backup-scripts/rsync.sh
 # Lukas Kallies
 # Created: Do Jun 23, 2011 - Lukas Kallies
-# Last modified: Di Nov 11, 2014 - 13:18
+# Last modified: Mi Nov 12, 2014 - 09:22
 #
 # This script backups data via rsync. The user
 # $SSHUSER needs an ssh key for the remote server
@@ -50,6 +50,6 @@ echo "-> syncing /var"
 ${RSYNC} -e "${SSH} -p ${SSHPORT}" -rlptz${DEBUG} --exclude-from=${EXCLUDE} --delete --delete-excluded /var ${SSHUSER}@${SSHSERVER}:${SSHPATH}/
 #TODO start services like mysql and potfix
 echo "-> disk usage"
-${SSH} -p ${SSHPORT} ${SSHUSER}@${SSHSERVER} "df -h"
+${SSH} -p ${SSHPORT} ${SSHUSER}@${SSHSERVER} "df -h ${SSHPATH}"
 
 exit 0
