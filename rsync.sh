@@ -45,10 +45,10 @@ echo "-> syncing /etc"
 ${RSYNC} -e "${SSH} -p ${SSHPORT}" -rlpogtz${DEBUG} --delete /etc ${SSHUSER}@${SSHSERVER}:${SSHPATH}/
 #-----------------#
 #/var (mysql, email)
-#TODO stop services like mysql and potfix
+#TODO stop services like mysql and postfix
 echo "-> syncing /var"
 ${RSYNC} -e "${SSH} -p ${SSHPORT}" -rlptz${DEBUG} --exclude-from=${EXCLUDE} --delete --delete-excluded /var ${SSHUSER}@${SSHSERVER}:${SSHPATH}/
-#TODO start services like mysql and potfix
+#TODO start services like mysql and postfix
 echo "-> disk usage"
 ${SSH} -p ${SSHPORT} ${SSHUSER}@${SSHSERVER} "df -h ${SSHPATH}"
 
