@@ -6,6 +6,8 @@ This includes simple backup mechanisms for directories like /home and /etc
 and other things like MySQL dump. They are aiming on root servers most
 likely running on Debian GNU/Linux.
 
+For a more advanced usage you might want to use [duplicity](http://duplicity.nongnu.org/).
+
 MySQLdump.sh
 ------------
 Creates a dump from all MySQL databases on the host. Reads password from
