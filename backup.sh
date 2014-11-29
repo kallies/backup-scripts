@@ -4,7 +4,7 @@
 # ~/git/backup-scripts/backup.sh
 # Lukas Kallies
 # Created: Do Jun 23, 2011 - Lukas Kallies
-# Last modified: Do Jun 23, 2011 - 14:08
+# Last modified: Sa Nov 29, 2014 - 20:59
 #
 # This scripts backups /etc /home /root and /var
 # (in a very static way). It also runs a MySQL
@@ -23,7 +23,8 @@
 # server. 
 ################################################
 
-export LANG=C
+export LC_ALL=C
+export PATH="/bin:/usr/bin"
 
 #gpg key to encrypt with, e.g. 0x12341234
 GPGKEY=""
@@ -31,25 +32,28 @@ GPGKEY=""
 FTPUSER=""
 FTPPASSWD=""
 FTPSERVER=""
+FTPUPLOAD="NO" #YES|NO
 #where should the script place its (temporary) files?
 BACKUPPATH="/backup"
+UPLOADPATH="/backup/hubic"
 #which backup script for MySQL should be started?
 MYSQLBACKUP="./MySQLdump.sh"
+BACKUPMYSQL="NO" #YES|NO
 #exclude the files mentioned in the following file
 EXCLUDE="/backup/exclude.example"
 #include the following dirs (without leading or trailing slash)
 INCLUDE="etc home var root opt"
-#Suffix for backupfiles, e.g. `date +%u` for weekly rotation
+#Suffix for backupfiles, e.g. `date +%u` for weekly rotation or "x" for no rotation
 SUFFIX=`date +%u`
 
-TAR="/bin/tar"
-GPG="/usr/bin/gpg"
-RM="/bin/rm"
-MV="/bin/mv"
-RENAME="/usr/bin/rename"
-SHA1SUM="/usr/bin/sha1sum"
-CAT="/bin/cat"
-LFTP="/usr/bin/lftp"
+TAR="tar"
+GPG="gpg"
+RM="rm"
+MV="mv"
+RENAME="rename"
+SHA1SUM="sha1sum"
+CAT="cat"
+LFTP="lftp"
 
 ORG_DIR=`pwd`
 #change to temp backup dir
@@ -88,9 +92,14 @@ do
 	${GPG} --always-trust -r ${GPGKEY} -e ${file}
 done
 
-#upload files
-echo "> uploading backups"
-${LFTP} -e "mput ${GPGFILELIST} SHA1SUM_${SUFFIX}; exit" ${FTPUSER}:${FTPPASSWD}@${FTPSERVER}
+if [ ${FTPUPLOAD} = "YES" ]
+then
+	#upload files
+	echo "> uploading backups"
+	${LFTP} -e "mput ${GPGFILELIST} SHA1SUM_${SUFFIX}; exit" ${FTPUSER}:${FTPPASSWD}@${FTPSERVER}
+else
+	${MV} -t ${UPLOADPATH} ${GPGFILELIST} SHA1SUM_${SUFFIX}
+fi
 
 #remove encrypted files
 ${RM} -f ${GPGFILELIST}
