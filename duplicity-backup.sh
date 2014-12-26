@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+################################################
+# ~/git/backup-scripts/duplicity-backup.sh
+# Lukas Kallies
+# Created: Fr Dec 26, 2014 - Lukas Kallies
+# Last modified: Fr Dec 26, 2014 - 17:29
+#
+# Published under the MIT License (MIT)
+################################################
+
 export LC_ALL=C
 export PATH="/bin:/usr/bin"
 

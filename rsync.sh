@@ -9,6 +9,8 @@
 # This script backups data via rsync. The user
 # $SSHUSER needs an ssh key for the remote server
 # otherwise a password will be requested.
+#
+# Published under the MIT License (MIT)
 ################################################
 
 export LANG=C

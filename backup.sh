@@ -20,7 +20,9 @@
 # Afer creating the tar.gz files they will be
 # encrypted with a configured gpg key and the
 # resulting files will be uploaded on an ftp
-# server. 
+# server.
+#
+# Published under the MIT License (MIT)
 ################################################
 
 export LC_ALL=C

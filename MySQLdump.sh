@@ -10,6 +10,8 @@
 # host. On debian based systems it greps for the
 # debian-sys-maint password, otherwise you can
 # configure user and password (e.g. root).
+#
+# Published under the MIT License (MIT)
 ################################################
 
 export LANG=C
