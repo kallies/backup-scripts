@@ -21,3 +21,6 @@ rsync.sh
 --------
 Creates backups via rsync (/home, /root, /etc, /var)
 
+duplicity-backup.sh
+-------------------
+Simple calls for a duplicity based backup script.
