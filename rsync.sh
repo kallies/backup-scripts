@@ -4,7 +4,7 @@
 # ~/git/backup-scripts/rsync.sh
 # Lukas Kallies
 # Created: Do Jun 23, 2011 - Lukas Kallies
-# Last modified: Mi Nov 12, 2014 - 09:22
+# Last modified: Mi Jun 15, 2016 - 10:18
 #
 # This script backups data via rsync. The user
 # $SSHUSER needs an ssh key for the remote server
@@ -20,6 +20,8 @@ export PATH="/bin:/usr/bin"
 #eval `ssh-agent`
 
 EXCLUDE="/backup/exclude.example"
+
+DELETEEXCLUDED="--delete-excluded"
 
 RSYNC="rsync"
 SSH="ssh"
@@ -37,19 +39,19 @@ fi
 
 #-----------------#
 echo "-> syncing /home"
-${RSYNC} -e "${SSH} -p ${SSHPORT}" -rlpogtz${DEBUG} --delete --delete-excluded /home ${SSHUSER}@${SSHSERVER}:${SSHPATH}/
+${RSYNC} -e "${SSH} -p ${SSHPORT}" -rlpogtz${DEBUG} --delete ${DELETEEXCLUDED} /home ${SSHUSER}@${SSHSERVER}:${SSHPATH}/
 #-----------------#
 echo "-> syncing /root"
-${RSYNC} -e "${SSH} -p ${SSHPORT}" -rlpogtz${DEBUG} --delete --exclude='.ssh' --exclude='.bash_history' --delete-excluded /root ${SSHUSER}@${SSHSERVER}:${SSHPATH}/
+${RSYNC} -e "${SSH} -p ${SSHPORT}" -rlpogtz${DEBUG} --delete --exclude='.ssh' --exclude='.bash_history' ${DELETEEXCLUDED} /root ${SSHUSER}@${SSHSERVER}:${SSHPATH}/
 #-----------------#
 #etc (apache2, mysql, email)
 echo "-> syncing /etc"
-${RSYNC} -e "${SSH} -p ${SSHPORT}" -rlpogtz${DEBUG} --delete /etc ${SSHUSER}@${SSHSERVER}:${SSHPATH}/
+${RSYNC} -e "${SSH} -p ${SSHPORT}" -rlpogtz${DEBUG} --delete ${DELETEEXCLUDED} /etc ${SSHUSER}@${SSHSERVER}:${SSHPATH}/
 #-----------------#
 #/var (mysql, email)
 #TODO stop services like mysql and postfix
 echo "-> syncing /var"
-${RSYNC} -e "${SSH} -p ${SSHPORT}" -rlptz${DEBUG} --exclude-from=${EXCLUDE} --delete --delete-excluded /var ${SSHUSER}@${SSHSERVER}:${SSHPATH}/
+${RSYNC} -e "${SSH} -p ${SSHPORT}" -rlptz${DEBUG} --exclude-from=${EXCLUDE} --delete ${DELETEEXCLUDED} /var ${SSHUSER}@${SSHSERVER}:${SSHPATH}/
 #TODO start services like mysql and postfix
 echo "-> disk usage"
 ${SSH} -p ${SSHPORT} ${SSHUSER}@${SSHSERVER} "df -h ${SSHPATH}"
